@@ -1,0 +1,34 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Sep 10, 2014, 9:03:56 PM
+    Author     : akef
+*/
+
+html, body, #map {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+ 
+.houses, .houses svg {
+  position: absolute;
+}
+ 
+.houses svg {
+  width: 60px;
+  height: 20px;
+  padding-right: 100px;
+  font: 10px sans-serif;
+}
+ 
+.houses circle {
+  fill: brown;
+  stroke: black;
+  stroke-width: 1.5px;
+}
+

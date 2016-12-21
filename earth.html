@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+<head>
+   <title>Google Earth Example</title>
+           <link rel="stylesheet" type="text/css" href="rows.css">
+   <script src="//www.google.com/jsapi?key=AIzaSyANnjNx4WR6NbFLC9VRaKlbuGzz91BhPLs"></script>
+   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+   <script type="text/javascript">
+      var ge;
+      google.load("earth", "1", {"other_params":"sensor=false"});
+
+      function init() {
+         google.earth.createInstance('map3d', initCB, failureCB);
+      }
+
+      function initCB(instance) {
+         ge = instance;
+         ge.getWindow().setVisibility(true);
+        
+         d3.json("rows.json", function (data) {
+    var overlay = new ge.overlay;
+
+    overlay.onAdd = function () {
+        var layer = d3.select(this.getPanes().overlayLayer).append("div")
+                .attr("class", "houses");
+
+        overlay.draw = function () {
+            var projection = this.getProjection(),
+                    padding = 10;
+            var marker = layer.selectAll("svg")
+                    .data(d3.entries(data))
+                    .each(transform)
+                    .enter().append("svg:svg")
+                    .each(transform)
+                    .attr("class", "marker");
+
+            marker.append("svg:circle")
+                    .attr("r", 4.5)
+                    .attr("cx", padding)
+                    .attr("cy", padding);
+
+            marker.append("svg:text")
+                    .attr("x", padding + 7)
+                    .attr("y", padding)
+                    .attr("dy", ".31em")
+                    .text(function (d) {
+                        return d.key;
+                    });
+   ge.getFeatures().appendChild(marker);
+            function transform(d) {
+                var point = ge.createPoint('');
+                d = point.setLatLng(d.value[0],d.value[1]);
+                d = projection.fromLatLngToDivPixel(d);
+                marker.setGeometry(point);
+                return d3.select(this).style("left", (d.x - padding) + "px").style("top", (d.y - padding) + "px");
+        }
+        };
+    };
+    overlay.setMap(ge);
+});
+
+      }
+
+      function failureCB(errorCode) {
+      }
+
+      function formatKmlForHtml(output) {
+         output = output.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+         output = output.replace(/\t/g, '  ');
+         output = output.replace(/\" xmlns/g, '\"\n     xmlns');
+         return output;
+      }
+
+      google.setOnLoadCallback(init);
+   </script>
+
+</head>
+<body>
+
+   <div id="map3d" style="height:400px; width:600px;"><div id="map"></div></div>
+   <div id="output_div"></div>
+
+</body>
+</html>
+
+
